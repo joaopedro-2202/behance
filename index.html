@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Estágio Fácil — Telas para Behance</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-slate-100 p-6" style="font-family:Inter,sans-serif">
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-xl font-extrabold text-slate-900">Estágio Fácil — telas para embed</h1>
+  <p class="text-sm text-slate-600 mt-1 mb-4">Clique em <b>Copiar iframe</b> e cole no módulo <b>Embed</b> do Behance (um por tela).</p>
+  <div id="warn" class="hidden mb-4 rounded-xl bg-amber-100 border border-amber-300 text-amber-900 text-sm p-3">
+    Você abriu este arquivo direto do computador, então os iframes ficariam com endereço local. Hospede a pasta (ex.: GitHub Pages) e abra esta página pelo link https://.
+  </div>
+  <div id="list" class="space-y-3"></div>
+</div>
+<script>
+const TELAS = [["Tela 1 · Explorar vagas", "tela-1-explorar-vagas.html"], ["Tela 2 · Detalhes da vaga", "tela-2-detalhes-da-vaga.html"], ["Tela 3 · Minhas candidaturas", "tela-3-minhas-candidaturas.html"], ["Tela 4 · Linha do tempo", "tela-4-linha-do-tempo.html"], ["Tela 5 · Contrato (TCE)", "tela-5-contrato-tce.html"], ["Tela 6 · Perfil", "tela-6-perfil.html"]];
+const MODOS = [['UI Final', ''], ['Wireframe', '&modo=wireframe']];
+if (location.protocol === 'file:') document.getElementById('warn').classList.remove('hidden');
+function code(file, extra) {
+  const url = new URL(file, location.href).href.split('?')[0] + '?ui=0' + extra;
+  return '<iframe src="' + url + '" width="100%" height="900" style="border:0" scrolling="no" loading="lazy" allowfullscreen></iframe>';
+}
+function copy(text, btn) {
+  const done = () => { const o = btn.textContent; btn.textContent = 'Copiado ✓'; setTimeout(() => (btn.textContent = o), 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, () => fallback(text, done));
+  else fallback(text, done);
+}
+function fallback(text, done) {
+  const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); done(); } catch (e) {} t.remove();
+}
+const list = document.getElementById('list');
+TELAS.forEach(([title, file]) => {
+  const row = document.createElement('div');
+  row.className = 'bg-white border border-slate-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3';
+  row.innerHTML = '<span class="text-sm font-bold text-slate-900">' + title + '</span>';
+  const box = document.createElement('div'); box.className = 'flex flex-wrap items-center gap-2';
+  MODOS.forEach(([label, extra]) => {
+    const a = document.createElement('a'); a.href = file + '?' + extra.slice(1); a.target = '_blank';
+    a.className = 'px-3 py-1.5 rounded-lg bg-slate-100 text-xs font-semibold text-slate-700 hover:bg-slate-200'; a.textContent = 'Abrir ' + label;
+    const b = document.createElement('button');
+    b.className = 'px-3 py-1.5 rounded-lg bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700'; b.textContent = 'Copiar iframe · ' + label;
+    b.onclick = () => copy(code(file, extra), b);
+    box.append(a, b);
+  });
+  row.append(box); list.append(row);
+});
+</script></body></html>
